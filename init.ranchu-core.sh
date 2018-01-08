@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/vendor/bin/sh
 
 
 # ro.kernel.android.qemud is normally set when we
