@@ -12,6 +12,8 @@ on init
 on post-fs-data
     setprop vold.post_fs_data_done 1
 
+on boot && property:ro.debuggable=1
+    setprop ro.adb.secure 0
 
 on boot
     setprop debug.hwui.renderer opengl
@@ -22,8 +24,6 @@ on boot
     chown root system /sys/power/wake_lock
     chown root system /sys/power/wake_unlock
     setprop ro.radio.use-ppp no
-    setprop ro.build.product generic
-    setprop ro.product.device generic
     setprop ro.hardware.audio.primary goldfish
     setprop ro.setupwizard.mode EMULATOR
 
@@ -33,7 +33,6 @@ on boot
     setprop status.battery.level_raw  50
     setprop status.battery.level_scale 9
 
-    start adbd
 
 # set up the GPU caching
     setprop ro.hwui.texture_cache_size 72
@@ -48,15 +47,6 @@ on boot
     setprop ro.hwui.text_large_cache_width 2048
     setprop ro.hwui.text_large_cache_height 1024
 
-# disable some daemons the emulator doesn't want
-    stop dund
-    stop akmd
-
-# start essential services
-# These were written for the classic emulator, but are applicable to ranchu
-    start goldfish-logcat
-#    start goldfish-setup
-
 
 # enable Google-specific location features,
 # like NetworkLocationProvider and LocationCollector
@@ -65,15 +55,7 @@ on boot
 #emulator is not much useful before boot complete
 #start it later
 on property:sys.boot_completed=1
-    setprop sys.usb.config adb
-    start adbd
-    start goldfish-logcat
     start ranchu-net
-
-on property:qemu.adbd=start
-    setprop sys.usb.config adb
-    start adbd
-    start goldfish-logcat
 
 service ranchu-setup /vendor/bin/init.ranchu-core.sh
     class core
