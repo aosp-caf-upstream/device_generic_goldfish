@@ -14,6 +14,8 @@ on post-fs-data
 
 
 on boot
+    setprop debug.hwui.renderer opengl
+    setprop ro.opengles.version ${ro.kernel.qemu.opengles.version}
     setprop net.eth0.gw 10.0.2.2
     setprop net.eth0.dns1 10.0.2.3
     setprop net.gprs.local-ip 10.0.2.15
@@ -66,6 +68,7 @@ on property:sys.boot_completed=1
     setprop sys.usb.config adb
     start adbd
     start goldfish-logcat
+    start ranchu-net
 
 on property:qemu.adbd=start
     setprop sys.usb.config adb
@@ -77,6 +80,9 @@ service ranchu-setup /vendor/bin/init.ranchu-core.sh
     user root
     group root
     oneshot
+
+on property:qemu.timezone=*
+    setprop persist.sys.timezone ${qemu.timezone}
 
 service ranchu-net /vendor/bin/init.ranchu-net.sh
     class late_start
